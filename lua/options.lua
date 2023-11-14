@@ -1,12 +1,26 @@
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
+--
+-- netrw settings
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize = 30
+vim.g.netrw_browse_split = 0
+vim.g.netrw_preview = 1
+vim.g.netrw_altv = 1
+vim.g.netrw_liststyle = 3
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
+vim.o.incsearch = true
+
 
 -- Make line numbers default
 vim.wo.number = true
+-- vim.o.nu = true
+vim.o.relativenumber = true
+vim.opt.scrolloff = 8
+vim.opt.colorcolumn = "100"
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
