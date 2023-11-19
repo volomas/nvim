@@ -10,6 +10,8 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  'tpope/vim-dadbod',
+  'unblevable/quick-scope',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -90,7 +92,8 @@ require('lazy').setup({
   },
   -- themes
   --
-  {'rebelot/kanagawa.nvim',
+  {
+    'rebelot/kanagawa.nvim',
     config = function()
       vim.cmd.colorscheme 'kanagawa'
     end
