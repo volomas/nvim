@@ -90,20 +90,24 @@ require('lazy').setup({
   },
   -- themes
   --
-  'nvim-tree/nvim-web-devicons',
-  {
-    "doums/darcula",
+  {'rebelot/kanagawa.nvim',
     config = function()
-      vim.cmd.colorscheme 'darcula'
-      vim.cmd [[highlight Normal guibg=#1B1D1E]]
-      vim.cmd [[highlight LineNr guibg=#1B1D1E]]
-      vim.cmd [[highlight SignColumn guibg=#1B1D1E]]
-      vim.cmd [[highlight Pmenu guibg=#323436]]
-      vim.cmd [[highlight PmenuSel guibg=#323436]]
-      vim.cmd [[highlight PmenuSbar guibg=#323436]]
-      vim.cmd [[highlight PmenuThumb guibg=#323436]]
+      vim.cmd.colorscheme 'kanagawa'
     end
   },
+  -- {
+  --   "doums/darcula",
+  --   config = function()
+  --     vim.cmd.colorscheme 'darcula'
+  --     vim.cmd [[highlight Normal guibg=#1B1D1E]]
+  --     vim.cmd [[highlight LineNr guibg=#1B1D1E]]
+  --     vim.cmd [[highlight SignColumn guibg=#1B1D1E]]
+  --     vim.cmd [[highlight Pmenu guibg=#323436]]
+  --     vim.cmd [[highlight PmenuSel guibg=#323436]]
+  --     vim.cmd [[highlight PmenuSbar guibg=#323436]]
+  --     vim.cmd [[highlight PmenuThumb guibg=#323436]]
+  --   end
+  -- },
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
