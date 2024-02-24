@@ -12,6 +12,7 @@ require('lazy').setup({
   'tpope/vim-rhubarb',
   'tpope/vim-dadbod',
   'unblevable/quick-scope',
+  'adelarsq/vim-matchit',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
