@@ -8,11 +8,15 @@ require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
 
   -- Git related plugins
+  --
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-dadbod',
   'unblevable/quick-scope',
+  'nelstrom/vim-visual-star-search',
+  'nvim-tree/nvim-web-devicons',
   'adelarsq/vim-matchit',
+
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
