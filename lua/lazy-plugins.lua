@@ -12,6 +12,7 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-dadbod',
+  'tpope/vim-unimpaired',
   'unblevable/quick-scope',
   'nelstrom/vim-visual-star-search',
   'nvim-tree/nvim-web-devicons',
