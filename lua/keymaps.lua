@@ -27,8 +27,8 @@ vim.keymap.set("x", "<leader>p", [["_dP]])
 -- Toogle file explorer
 -- vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>")
 -- vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
-vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeToggle<cr>", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("n", "<leader>f", ":NvimTreeFindFile<cr>", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeToggle<cr>", {silent = true, noremap = true})
+vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeFindFile<cr>", {silent = true, noremap = true})
 
 -- Freed <C-l> in Netrw
 -- https://github.com/christoomey/vim-tmux-navigator/issues/189
