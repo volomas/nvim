@@ -23,6 +23,11 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer.sh<CR>")
 vim.keymap.set("n", "==", vim.lsp.buf.format)
 vim.keymap.set("x", "<leader>p", [["_dP]])
+vim.keymap.set("n", "<leader>1", "1gt")
+vim.keymap.set("n", "<leader>2", "2gt")
+vim.keymap.set("n", "<leader>3", "3gt")
+vim.keymap.set("n", "<leader>4", "4gt")
+vim.keymap.set("n", "<leader>5", "5gt")
 
 -- Toogle file explorer
 -- vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>")
