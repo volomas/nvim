@@ -24,6 +24,10 @@ vim.o.relativenumber = true
 vim.opt.scrolloff = 8
 vim.opt.colorcolumn = "100"
 
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+vim.opt.smarttab = true
+
 -- Enable mouse mode
 vim.o.mouse = 'a'
 

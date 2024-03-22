@@ -18,6 +18,13 @@ require('lazy').setup({
   'nvim-tree/nvim-web-devicons',
   'adelarsq/vim-matchit',
 
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    config = true
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -101,7 +108,7 @@ require('lazy').setup({
   {
     'rebelot/kanagawa.nvim',
     config = function()
-      vim.cmd.colorscheme 'kanagawa'
+      vim.cmd.colorscheme 'kanagawa-dragon'
     end
   },
   -- {
