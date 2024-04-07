@@ -6,6 +6,20 @@ vim.g.maplocalleader = ' '
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- to make sign bar and numbers bar bg transparent
+local side = vim.api.nvim_create_augroup('transparentBg', { clear = true })
+vim.api.nvim_create_autocmd('ColorScheme', {
+  callback = function()
+    vim.cmd [[highlight SignColumn guibg=NONE]]
+    vim.cmd [[highlight GitSignsAdd guibg=NONE]]
+    vim.cmd [[highlight GitSignsChange guibg=NONE]]
+    vim.cmd [[highlight GitSignsDelete guibg=NONE]]
+    vim.cmd [[highlight LineNr guibg=NONE]]
+  end,
+  group = side,
+  pattern = '*',
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 require('lazy-bootstrap')
 
