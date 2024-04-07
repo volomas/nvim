@@ -15,7 +15,6 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open float
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 vim.keymap.set("n", "\\\\", ":noh<CR>", { noremap = true })
-vim.keymap.set("n", "-", vim.cmd.Ex)
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
@@ -28,12 +27,13 @@ vim.keymap.set("n", "<leader>2", "2gt")
 vim.keymap.set("n", "<leader>3", "3gt")
 vim.keymap.set("n", "<leader>4", "4gt")
 vim.keymap.set("n", "<leader>5", "5gt")
+vim.keymap.set("n", "<C-q>", ":qall<CR>");
 
 -- Toogle file explorer
 -- vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>")
 -- vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
 -- vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeToggle<cr>", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeFindFile<cr>", {silent = true, noremap = true})
+vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeFindFile<cr>", { silent = true, noremap = true })
 
 -- Freed <C-l> in Netrw
 -- https://github.com/christoomey/vim-tmux-navigator/issues/189
