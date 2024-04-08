@@ -20,6 +20,19 @@ vim.api.nvim_create_autocmd('ColorScheme', {
   pattern = '*',
 })
 
+-- folding
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  callback = function()
+    if require("nvim-treesitter.parsers").has_parser() then
+      vim.opt.foldmethod = "expr"
+      vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+      vim.opt.foldlevel = 99
+    else
+      vim.opt.foldmethod = "syntax"
+    end
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 require('lazy-bootstrap')
 
