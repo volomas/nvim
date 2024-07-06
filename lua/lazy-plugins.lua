@@ -13,10 +13,13 @@ require('lazy').setup({
   'tpope/vim-rhubarb',
   'tpope/vim-dadbod',
   'tpope/vim-unimpaired',
+  'tpope/vim-obsession',
+
   'unblevable/quick-scope',
   'nelstrom/vim-visual-star-search',
   'nvim-tree/nvim-web-devicons',
   'adelarsq/vim-matchit',
+  'github/copilot.vim',
 
   -- needed for dap
   { "nvim-neotest/nvim-nio" },
