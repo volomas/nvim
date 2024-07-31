@@ -28,6 +28,12 @@ vim.keymap.set("n", "<leader>3", "3gt")
 vim.keymap.set("n", "<leader>4", "4gt")
 vim.keymap.set("n", "<leader>5", "5gt")
 vim.keymap.set("n", "<C-q>", ":qall<CR>");
+-- alternate file mapping on backspace
+vim.keymap.set("n", "<BS>", "<C-^>");
+
+-- copilot
+vim.keymap.set("i", "<C-j>", "copilot#Next()", {expr=true, silent=true})
+vim.keymap.set("i", "<C-k>", "copilot#Previous()", {expr=true, silent=true})
 
 -- Toogle file explorer
 -- vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>")
