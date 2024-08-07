@@ -21,6 +21,9 @@ require('lazy').setup({
   'adelarsq/vim-matchit',
   'github/copilot.vim',
 
+  -- for markdown preview
+  {"ellisonleao/glow.nvim", config = true, cmd = "Glow"},
+
   -- needed for dap
   { "nvim-neotest/nvim-nio" },
   'ldelossa/nvim-dap-projects',
