@@ -16,13 +16,12 @@ vim.g.editorconfig = true
 vim.o.hlsearch = true
 vim.o.incsearch = true
 
-
 -- Make line numbers default
 vim.wo.number = true
 -- vim.o.nu = true
 vim.o.relativenumber = true
 vim.opt.scrolloff = 8
-vim.opt.colorcolumn = "100"
+vim.opt.colorcolumn = '100'
 
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
@@ -51,7 +50,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Decrease update time
 vim.o.updatetime = 250
-vim.o.timeoutlen = 100
+vim.o.timeoutlen = 300
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
