@@ -26,16 +26,17 @@ require('lazy').setup({
   'nvim-tree/nvim-web-devicons',
   'adelarsq/vim-matchit',
   'github/copilot.vim',
+  'mbbill/undotree',
 
   -- for markdown preview
-  {"ellisonleao/glow.nvim", config = true, cmd = "Glow"},
+  { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
 
   -- themes
   {
     'rebelot/kanagawa.nvim',
     config = function()
       vim.cmd.colorscheme 'kanagawa-dragon'
-    end
+    end,
   },
 
   {
@@ -60,8 +61,8 @@ require('lazy').setup({
       mappings = {
         basic = false,
         extra = false,
-      }
-    }
+      },
+    },
   },
 
   -- modular approach: using `require 'path/name'` will
@@ -90,7 +91,6 @@ require('lazy').setup({
   require 'kickstart/plugins/lint',
 
   require 'kickstart/plugins/autopairs',
-
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
