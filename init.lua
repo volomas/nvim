@@ -92,6 +92,19 @@ vim.g.maplocalleader = ' '
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- folding
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+  callback = function()
+    if require('nvim-treesitter.parsers').has_parser() then
+      vim.opt.foldmethod = 'expr'
+      vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+      vim.opt.foldlevel = 99
+    else
+      vim.opt.foldmethod = 'syntax'
+    end
+  end,
+})
+
 -- to make sign bar and numbers bar bg transparent
 local side = vim.api.nvim_create_augroup('transparentBg', { clear = true })
 vim.api.nvim_create_autocmd('ColorScheme', {
@@ -111,7 +124,6 @@ vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 require 'options'
-
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 require 'lazy-bootstrap'
