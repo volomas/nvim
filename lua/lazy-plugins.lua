@@ -27,6 +27,7 @@ require('lazy').setup({
   'adelarsq/vim-matchit',
   'github/copilot.vim',
   'mbbill/undotree',
+  'sindrets/diffview.nvim',
 
   -- for markdown preview
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
@@ -36,6 +37,19 @@ require('lazy').setup({
     'rebelot/kanagawa.nvim',
     config = function()
       -- vim.cmd.colorscheme 'kanagawa-dragon'
+    end,
+  },
+
+  {
+    'projekt0n/github-nvim-theme',
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('github-theme').setup {
+        -- ...
+      }
+
+      -- vim.cmd 'colorscheme github_dark'
     end,
   },
 
