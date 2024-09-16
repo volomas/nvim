@@ -134,5 +134,22 @@ require 'lazy-plugins'
 -- [[ Basic Keymaps ]]
 require 'keymaps'
 
+local lightFunc = function()
+  vim.cmd 'set termguicolors'
+  vim.cmd [[colorscheme github_light]]
+end
+
+local darkFunc = function()
+  vim.cmd 'set termguicolors'
+  vim.cmd [[colorscheme darcula_dark]]
+end
+
+-- custom commands to switch between Light/Dark themes
+vim.api.nvim_create_user_command('Light', lightFunc, {})
+vim.api.nvim_create_user_command('Dark', darkFunc, {})
+
+-- dark theme by default
+vim.cmd [[Dark]]
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

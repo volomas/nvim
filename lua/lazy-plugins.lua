@@ -35,9 +35,7 @@ require('lazy').setup({
   -- themes
   {
     'rebelot/kanagawa.nvim',
-    config = function()
-      -- vim.cmd.colorscheme 'kanagawa-dragon'
-    end,
+    config = function() end,
   },
 
   {
@@ -48,8 +46,6 @@ require('lazy').setup({
       require('github-theme').setup {
         -- ...
       }
-
-      -- vim.cmd 'colorscheme github_dark'
     end,
   },
 
@@ -59,8 +55,8 @@ require('lazy').setup({
     priority = 1002,
     config = function(_, opts)
       -- enable colorscheme
-      vim.cmd 'set termguicolors'
-      vim.cmd [[colorscheme darcula_dark]]
+      -- vim.cmd 'set termguicolors'
+      -- vim.cmd [[colorscheme darcula_dark]]
     end,
   },
 
