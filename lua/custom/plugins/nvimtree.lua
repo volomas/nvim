@@ -8,7 +8,17 @@ return {
   config = function()
     require("nvim-tree").setup {
       filters = {
-        dotfiles = true
+        dotfiles = false,
+        git_ignored = false,
+        custom = {".git"}
+      },
+      git = {
+        enable = true,
+        show_on_dirs = true,
+        show_on_open_dirs = true,
+        disable_for_dirs = {},
+        timeout = 400,
+        cygwin_support = false,
       }
     }
   end,
