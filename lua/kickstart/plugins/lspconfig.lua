@@ -9,11 +9,11 @@ return {
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
-      { 'folke/neodev.nvim',       opts = {} },
+      { 'folke/neodev.nvim', opts = {} },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -62,7 +62,7 @@ return {
               buffer = event.buf,
               noremap = true,
               silent = true,
-              desc = 'LSP: ' .. desc
+              desc = 'LSP: ' .. desc,
             })
           end
 
@@ -101,9 +101,12 @@ return {
           map('<leader>q', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
           -- TODO doesn't work perfecly, enter needs to be preseed
-          vim.keymap.set('n', '=o',
+          vim.keymap.set(
+            'n',
+            '=o',
             '<cmd>lua vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } } })<CR><CR>',
-            { noremap = true, silent = true })
+            { noremap = true, silent = true }
+          )
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -162,11 +165,11 @@ return {
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-       -- Add folding capabilities required by ufo.nvim
-      capabilities.textDocument.foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true,
-      }
+      -- Add folding capabilities required by ufo.nvim
+      -- capabilities.textDocument.foldingRange = {
+      --   dynamicRegistration = false,
+      --   lineFoldingOnly = true,
+      -- }
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
