@@ -93,17 +93,17 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 -- folding
-vim.api.nvim_create_autocmd({ 'FileType' }, {
-  callback = function()
-    vim.opt.foldlevel = 99
-    if require('nvim-treesitter.parsers').has_parser() then
-      vim.opt.foldmethod = 'expr'
-      vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-    else
-      vim.opt.foldmethod = 'syntax'
-    end
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'FileType' }, {
+--   callback = function()
+--     vim.opt.foldlevel = 99
+--     if require('nvim-treesitter.parsers').has_parser() then
+--       vim.opt.foldmethod = 'expr'
+--       vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+--     else
+--       vim.opt.foldmethod = 'syntax'
+--     end
+--   end,
+-- })
 
 -- to make sign bar and numbers bar bg transparent
 local side = vim.api.nvim_create_augroup('transparentBg', { clear = true })
