@@ -57,6 +57,10 @@ return {
             vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
+          local vmap = function(keys, func, desc)
+            vim.keymap.set('v', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+          end
+
           local imap = function(keys, func, desc)
             vim.keymap.set('i', keys, func, {
               buffer = event.buf,
@@ -97,16 +101,11 @@ return {
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-          map('<leader>q', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          vim.keymap.set({ 'v', 'n' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: Code Action' })
 
           -- TODO doesn't work perfecly, enter needs to be preseed
-          vim.keymap.set(
-            'n',
-            '=o',
-            '<cmd>lua vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } } })<CR><CR>',
-            { noremap = true, silent = true }
-          )
+          local util = require 'util'
+          vim.keymap.set('n', '=o', util.organize_imports, { buffer = event.buf, desc = 'LSP: Organize Imports' })
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
