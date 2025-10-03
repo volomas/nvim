@@ -58,15 +58,19 @@ local api = require 'Comment.api'
 vim.keymap.set('n', '<C-_>', api.toggle.linewise.current)
 vim.keymap.set('x', '<C-_>', '<Plug>(comment_toggle_linewise_visual)')
 
--- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+-- [[ Basic Autocommands ]]
+--  See `:help lua-guide-autocommands`
+
+-- Highlight when yanking (copying) text
+--  Try it with `yap` in normal mode
+--  See `:help vim.hl.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
-  group = highlight_group,
-  pattern = '*',
 })
+
 
 -- vim: ts=2 sts=2 sw=2 et
