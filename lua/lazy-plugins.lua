@@ -16,6 +16,50 @@
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  'tpope/vim-fugitive',
+  'tpope/vim-rhubarb',
+  'tpope/vim-dadbod',
+  'tpope/vim-unimpaired',
+  'tpope/vim-obsession',
+  'unblevable/quick-scope',
+  'nelstrom/vim-visual-star-search',
+  'nvim-tree/nvim-web-devicons',
+  'adelarsq/vim-matchit',
+  'github/copilot.vim',
+  'mbbill/undotree',
+  'sindrets/diffview.nvim',
+
+  -- for markdown preview
+  { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
+
+  -- themes
+  {
+    'rebelot/kanagawa.nvim',
+    config = function() end,
+  },
+
+  {
+    'projekt0n/github-nvim-theme',
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('github-theme').setup {
+        -- ...
+      }
+    end,
+  },
+  { 'rose-pine/neovim', name = 'rose-pine' },
+
+  {
+    'vermdeep/darcula_dark.nvim',
+    lazy = false,
+    priority = 1002,
+    config = function(_, opts)
+      -- enable colorscheme
+      -- vim.cmd 'set termguicolors'
+      -- vim.cmd [[colorscheme darcula_dark]]
+    end,
+  },
 
   {
     'rktjmp/lush.nvim',
