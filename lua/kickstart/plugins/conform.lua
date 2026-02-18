@@ -15,8 +15,15 @@ return {
     },
     opts = {
       notify_on_error = false,
-      format_on_save = false,
+      format_on_save = function(bufnr)
+        -- Enable format-on-save for Go files only
+        if vim.bo[bufnr].filetype == 'go' then
+          return { timeout_ms = 500, lsp_format = 'fallback' }
+        end
+        return nil
+      end,
       formatters_by_ft = {
+        go = { 'goimports', 'gofumpt' },
         json = { 'jq' },
         lua = { 'stylua' },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
