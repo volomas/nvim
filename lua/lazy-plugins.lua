@@ -81,6 +81,19 @@ require('lazy').setup({
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_z = {
+          {
+            function()
+              local ok, opencode = pcall(require, 'opencode')
+              if ok then
+                return opencode.statusline()
+              end
+              return ''
+            end,
+          },
+        },
+      },
     },
   },
 
