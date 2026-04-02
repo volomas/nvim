@@ -1,7 +1,6 @@
 -- [[ Setting options ]]
 -- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---
+
 -- netrw settings
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 30
@@ -17,16 +16,15 @@ vim.o.hlsearch = true
 vim.o.incsearch = true
 
 -- Make line numbers default
-vim.wo.number = true
--- vim.o.nu = true
+vim.o.number = true
 vim.o.relativenumber = true
-vim.opt.scrolloff = 8
-vim.opt.colorcolumn = '100'
+vim.o.scrolloff = 8
+vim.o.colorcolumn = '100'
 
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.expandtab = true
-vim.opt.smarttab = true
+vim.o.shiftwidth = 4
+vim.o.tabstop = 4
+vim.o.expandtab = true
+vim.o.smarttab = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -68,16 +66,14 @@ vim.o.splitbelow = true
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
---
---  Notice listchars is set using `vim.opt` instead of `vim.o`.
---  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
---   See `:help lua-options`
---   and `:help lua-options-guide`
 vim.o.list = false
 vim.opt.listchars = { trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
+
+-- Show which line your cursor is on
+vim.o.cursorline = true
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -89,5 +85,8 @@ vim.o.termguicolors = true
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
+
+-- Global floating window border (new in 0.12, replaces per-plugin border config)
+vim.o.winborder = 'rounded'
 
 -- vim: ts=2 sts=2 sw=2 et

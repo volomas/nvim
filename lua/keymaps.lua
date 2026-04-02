@@ -9,10 +9,9 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', 'ge', vim.diagnostic.goto_next, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', 'gE', vim.diagnostic.goto_prev, { desc = 'Go to next diagnostic message' })
+-- Note: [d and ]d are now default mappings in Neovim 0.12
+vim.keymap.set('n', 'ge', function() vim.diagnostic.jump { count = 1 } end, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', 'gE', function() vim.diagnostic.jump { count = -1 } end, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', '<leader>E', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
@@ -38,24 +37,14 @@ vim.keymap.set('x', '<', [[<gv]])
 
 -- copilot
 vim.keymap.set('i', '<C-j>', 'copilot#Next()', { expr = true, silent = true })
-vim.keymap.set('i', '<C-k>', 'copilot#Previous()', { expr = true, silent = true })
+vim.keymap.set('i', '<C-l>', 'copilot#Previous()', { expr = true, silent = true })
 
--- Toogle file explorer
--- vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>")
--- vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
--- vim.api.nvim_set_keymap("n", "<leader>e", ":NvimTreeToggle<cr>", {silent = true, noremap = true})
+-- Toggle file explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeFindFile<cr>', { silent = true, noremap = true })
 
--- Freed <C-l> in Netrw
--- https://github.com/christoomey/vim-tmux-navigator/issues/189
--- When in netrw, c-l is refreshing the file tree, but c-l is bind in neovim to move to the left pane
--- The trick here is bind it some rnadom combo
-vim.keymap.set('n', '<leader><leader><leader><leader><leader><leader>l', '<Plug>NetrwRefresh')
-
-local api = require 'Comment.api'
-
-vim.keymap.set('n', '<C-_>', api.toggle.linewise.current)
-vim.keymap.set('x', '<C-_>', '<Plug>(comment_toggle_linewise_visual)')
+-- Comment toggle (using built-in gc/gcc from Neovim 0.10+)
+vim.keymap.set('n', '<C-_>', 'gcc', { remap = true, desc = 'Toggle comment' })
+vim.keymap.set('x', '<C-_>', 'gc', { remap = true, desc = 'Toggle comment' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`

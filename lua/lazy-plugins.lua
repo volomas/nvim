@@ -15,19 +15,17 @@
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  { 'NMAC427/guess-indent.nvim', opts = {} }, -- Detect tabstop and shiftwidth automatically
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-dadbod',
-  'tpope/vim-unimpaired',
+  -- vim-unimpaired removed: [d/]d, [q/]q, [b/]b etc. are now Neovim 0.12 defaults
   'tpope/vim-obsession',
   'unblevable/quick-scope',
   'nelstrom/vim-visual-star-search',
   'nvim-tree/nvim-web-devicons',
-  'adelarsq/vim-matchit',
   'github/copilot.vim',
-  'mbbill/undotree',
-  'sindrets/diffview.nvim',
+  -- diffview removed: use built-in :DiffTool (Neovim 0.12)
 
   -- for markdown preview
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
@@ -35,7 +33,7 @@ require('lazy').setup({
   -- themes
   {
     'rebelot/kanagawa.nvim',
-    config = function() end,
+    lazy = true,
   },
 
   {
@@ -84,17 +82,7 @@ require('lazy').setup({
     },
   },
 
-  -- "gc" to comment visual regions/lines
-  {
-    'numToStr/Comment.nvim',
-    opts = {
-      padding = true,
-      mappings = {
-        basic = false,
-        extra = false,
-      },
-    },
-  },
+  -- Comment.nvim removed: Neovim has built-in gc/gcc since 0.10
 
   -- modular approach: using `require 'path/name'` will
   -- include a plugin definition from file lua/path/name.lua

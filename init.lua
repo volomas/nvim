@@ -95,12 +95,13 @@ vim.g.loaded_netrwPlugin = 1
 -- folding
 vim.api.nvim_create_autocmd({ 'FileType' }, {
   callback = function()
-    vim.opt.foldlevel = 99
-    if require('nvim-treesitter.parsers').has_parser() then
-      vim.opt.foldmethod = 'expr'
-      vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+    vim.wo.foldlevel = 99
+    local language = vim.treesitter.language.get_lang(vim.bo.filetype)
+    if language and vim.treesitter.language.add(language) then
+      vim.wo.foldmethod = 'expr'
+      vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
     else
-      vim.opt.foldmethod = 'syntax'
+      vim.wo.foldmethod = 'syntax'
     end
   end,
 })
@@ -135,12 +136,10 @@ require 'lazy-plugins'
 require 'keymaps'
 
 local lightFunc = function()
-  vim.cmd 'set termguicolors'
   vim.cmd [[colorscheme github_light]]
 end
 
 local darkFunc = function()
-  vim.cmd 'set termguicolors'
   vim.cmd [[colorscheme darcula_dark]]
 end
 
