@@ -9,7 +9,7 @@ return {
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
       local parsers = {
-        'bash', 'c', 'cpp', 'diff', 'go', 'html', 'javascript',
+        'bash', 'c', 'cpp', 'diff', 'go', 'html', 'java', 'javascript',
         'lua', 'luadoc', 'markdown', 'markdown_inline', 'python',
         'query', 'rust', 'tsx', 'typescript', 'vim', 'vimdoc',
       }

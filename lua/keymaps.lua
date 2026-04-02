@@ -15,6 +15,26 @@ vim.keymap.set('n', 'gE', function() vim.diagnostic.jump { count = -1 } end, { d
 vim.keymap.set('n', '<leader>E', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+-- Go-to navigation aliases matching ideavimrc (<leader>g* pattern)
+-- These complement the existing gd/gr/gI/etc. mappings set in lspconfig.lua on LspAttach
+-- They are set globally here so which-key shows them; lspconfig sets buffer-local variants
+vim.keymap.set('n', '<leader>gi', function()
+  require('telescope.builtin').lsp_implementations()
+end, { desc = '[G]oto [I]mplementation' })
+
+vim.keymap.set('n', '<leader>gu', function()
+  require('telescope.builtin').lsp_references()
+end, { desc = '[G]oto [U]sages / References' })
+
+vim.keymap.set('n', '<leader>gy', function()
+  require('telescope.builtin').lsp_type_definitions()
+end, { desc = '[G]oto t[Y]pe definition' })
+
+-- <leader>c = Go to Class (workspace symbols, matching ideavimrc GotoClass)
+vim.keymap.set('n', '<leader>c', function()
+  require('telescope.builtin').lsp_workspace_symbols { query = '', symbols = { 'class', 'interface', 'enum', 'struct' } }
+end, { desc = '[C]lass / Go to Class' })
+
 vim.keymap.set('n', '\\\\', ':noh<CR>', { noremap = true })
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')

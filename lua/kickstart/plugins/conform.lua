@@ -24,6 +24,7 @@ return {
       end,
       formatters_by_ft = {
         go = { 'goimports', 'gofumpt' },
+        java = { 'google-java-format' },
         json = { 'jq' },
         lua = { 'stylua' },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },

@@ -25,7 +25,7 @@ return {
     'leoluz/nvim-dap-go',
   },
   keys = {
-    -- Basic debugging keymaps, feel free to change to your liking!
+    -- Run/debug keymaps matching ideavimrc \-prefix pattern
     {
       '<F5>',
       function()
@@ -54,27 +54,53 @@ return {
       end,
       desc = 'Debug: Step Out',
     },
+    -- \b = ToggleLineBreakpoint (matches ideavimrc)
     {
-      '<leader>b',
+      '\\b',
       function()
         require('dap').toggle_breakpoint()
       end,
       desc = 'Debug: Toggle Breakpoint',
     },
+    -- \B = conditional breakpoint
     {
-      '<leader>B',
+      '\\B',
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
       end,
-      desc = 'Debug: Set Breakpoint',
+      desc = 'Debug: Set Conditional Breakpoint',
     },
-    -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
+    -- \u = Rerun (matches ideavimrc)
+    {
+      '\\u',
+      function()
+        require('dap').run_last()
+      end,
+      desc = 'Debug: Re-run Last Session',
+    },
+    -- \f = ChooseRunConfiguration (matches ideavimrc)
+    {
+      '\\f',
+      function()
+        require('dap').continue { new = true }
+      end,
+      desc = 'Debug: Pick Run Configuration',
+    },
+    -- \t = ActivateRunToolWindow / toggle DAP UI (matches ideavimrc)
+    {
+      '\\t',
+      function()
+        require('dapui').toggle()
+      end,
+      desc = 'Debug: Toggle DAP UI',
+    },
+    -- Keep F7 as an alias for DAP UI toggle
     {
       '<F7>',
       function()
         require('dapui').toggle()
       end,
-      desc = 'Debug: See last session result.',
+      desc = 'Debug: Toggle DAP UI',
     },
   },
   config = function()
@@ -95,6 +121,8 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        -- java-debug-adapter and java-test are installed via mason-tool-installer
+        -- and configured in ftplugin/java.lua via nvim-jdtls
       },
     }
 

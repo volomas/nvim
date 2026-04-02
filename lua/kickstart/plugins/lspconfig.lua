@@ -173,6 +173,11 @@ return {
         'goimports', -- Go imports formatter
         'gofumpt', -- Stricter Go formatter
         'golangci-lint', -- Go linter aggregator
+        -- Java toolchain (managed by ftplugin/java.lua via nvim-jdtls)
+        'jdtls',
+        'java-debug-adapter',
+        'java-test',
+        'google-java-format',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
       require('mason-lspconfig').setup {}

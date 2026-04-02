@@ -23,20 +23,23 @@ return {
       -- document existing key chains
       local wk = require 'which-key'
       wk.add {
-        { '<leader>c', group = '[C]ode' },
+        { '<leader>c', group = '[C]lass / Go to Class' },
         { '<leader>c_', hidden = true },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>d_', hidden = true },
-        { '<leader>g', group = '[G]it' },
+        { '<leader>g', group = '[G]oto' },
         { '<leader>g_', hidden = true },
         { '<leader>h', group = 'More git' },
         { '<leader>h_', hidden = true },
-        { '<leader>r', group = '[R]ename' },
+        { '<leader>r', group = '[R]efactor' },
         { '<leader>r_', hidden = true },
         { '<leader>s', group = '[S]earch' },
         { '<leader>s_', hidden = true },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>w_', hidden = true },
+        { '<leader>v', group = '[V]cs / Git' },
+        { '<leader>v_', hidden = true },
+        { '\\', group = 'Run / Debug' },
       }
     end,
   },
