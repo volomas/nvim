@@ -164,6 +164,8 @@ return {
             },
           },
         },
+
+        bashls = {},
       }
 
       -- Ensure the servers and tools above are installed via Mason
@@ -178,6 +180,9 @@ return {
         'java-debug-adapter',
         'java-test',
         'google-java-format',
+        'bash-language-server',
+        'shellcheck',
+        'shfmt',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
       require('mason-lspconfig').setup {}

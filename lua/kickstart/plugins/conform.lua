@@ -27,6 +27,8 @@ return {
         java = { 'google-java-format' },
         json = { 'jq' },
         lua = { 'stylua' },
+        sh = { 'shfmt' },
+        bash = { 'shfmt' },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         javascript = { 'prettierd', 'prettier', stop_after_first = true },

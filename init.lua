@@ -92,6 +92,14 @@ vim.g.maplocalleader = ' '
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- Detect zsh C-x C-e temp files as bash so LSP/completion works
+vim.filetype.add {
+  pattern = {
+    ['.*/tmp/zsh.*'] = 'bash',
+    ['.*/tmp/bash%-fc.*'] = 'bash',
+  },
+}
+
 -- folding
 vim.api.nvim_create_autocmd({ 'FileType' }, {
   callback = function()

@@ -7,7 +7,17 @@ return {
       local lint = require 'lint'
       lint.linters_by_ft = {
         go = { 'golangcilint' },
+        sh = { 'shellcheck' },
+        bash = { 'shellcheck' },
         -- markdown = { 'markdownlint' },
+      }
+
+      -- Exclude SC2148 (Tips depend on target shell) for temp files without shebangs
+      -- (e.g. when using C-x C-e to edit shell commands)
+      lint.linters.shellcheck.args = {
+        '--format', 'json',
+        '--exclude', 'SC2148',
+        '-',
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
