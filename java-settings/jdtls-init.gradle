@@ -1,0 +1,21 @@
+// Gradle init script for jdtls: redirect Eclipse default output directory
+// from bin/ (Buildship default) into build/eclipse-bin/
+allprojects {
+  // Hook 1: when eclipse plugin is applied by ID
+  plugins.withId('eclipse') {
+    eclipse.classpath.defaultOutputDir = file("${project.layout.buildDirectory.get().asFile}/eclipse-bin")
+    logger.warn("JDTLS-INIT: eclipse plugin detected for ${project.name}, set defaultOutputDir to ${eclipse.classpath.defaultOutputDir}")
+  }
+  // Hook 2: also try via the plugin class directly
+  plugins.withType(org.gradle.plugins.ide.eclipse.EclipsePlugin) {
+    eclipse.classpath.defaultOutputDir = file("${project.layout.buildDirectory.get().asFile}/eclipse-bin")
+    logger.warn("JDTLS-INIT: EclipsePlugin class detected for ${project.name}, set defaultOutputDir to ${eclipse.classpath.defaultOutputDir}")
+  }
+  // Hook 3: afterEvaluate as a last resort to override anything that came before
+  afterEvaluate {
+    if (plugins.hasPlugin('eclipse')) {
+      eclipse.classpath.defaultOutputDir = file("${project.layout.buildDirectory.get().asFile}/eclipse-bin")
+      logger.warn("JDTLS-INIT: afterEvaluate override for ${project.name}, defaultOutputDir = ${eclipse.classpath.defaultOutputDir}")
+    }
+  }
+}

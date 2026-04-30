@@ -22,14 +22,12 @@ return {
         java = true,
       },
     })
-    require("telescope").load_extension("refactoring")
-
     -- Extract function supports only visual mode
     vim.keymap.set("x", "<leader>rv", function() require('refactoring').refactor('Extract Variable') end)
     vim.keymap.set(
       { "n", "x" },
       "<leader>rr",
-      function() require('telescope').extensions.refactoring.refactors() end
+      function() require('refactoring').select_refactor() end
     )
   end,
 }

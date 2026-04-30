@@ -33,7 +33,8 @@ require('lazy').setup({
   -- themes
   {
     'rebelot/kanagawa.nvim',
-    lazy = true,
+    lazy = false,
+    priority = 1003,
   },
 
   {

@@ -148,7 +148,7 @@ local lightFunc = function()
 end
 
 local darkFunc = function()
-  vim.cmd [[colorscheme darcula_dark]]
+  vim.cmd [[colorscheme kanagawa-wave]]
 end
 
 -- custom commands to switch between Light/Dark themes

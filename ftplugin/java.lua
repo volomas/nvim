@@ -50,7 +50,8 @@ if not root_dir then
   root_dir = vim.fn.getcwd()
 end
 local project_name = vim.fn.fnamemodify(root_dir, ':p:h:t')
-local workspace_dir = vim.fn.stdpath 'cache' .. '/jdtls-workspace/' .. project_name
+local jdtls_cache = vim.fn.stdpath 'cache' .. '/jdtls-workspace/' .. project_name
+local workspace_dir = jdtls_cache
 
 -- ── DAP bundles (java-debug-adapter + java-test) ───────────────────────────
 local bundles = {}
@@ -133,6 +134,14 @@ local config = {
       -- regenerating source=1.8 fallback when it can't resolve the pom property chain
       settings = {
         url = vim.fn.expand '~/.config/nvim/java-settings/org.eclipse.jdt.core.prefs',
+      },
+      -- Keep Eclipse metadata (.classpath, .project, .factorypath) out of the project root
+      import = {
+        generatesMetadataFilesAtProjectRoot = false,
+        gradle = {
+          -- Init script redirects Eclipse output dirs (bin/) into build/eclipse-output
+          arguments = { '--init-script', vim.fn.expand '~/.config/nvim/java-settings/jdtls-init.gradle' },
+        },
       },
       maven = { downloadSources = true },
       implementationsCodeLens = { enabled = true },
