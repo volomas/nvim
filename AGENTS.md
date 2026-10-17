@@ -4,7 +4,7 @@ Kickstart.nvim fork targeting Neovim 0.12+. Plugin manager: lazy.nvim (SSH git U
 
 ## Commands
 - **Format Lua**: `stylua %` (CLI) or `==` in any mode (conform.nvim, async)
-- **Format on save**: Go only (goimports + gofumpt). All other filetypes: manual `==`.
+- **Format on save**: Go and Java only (goimports + gofumpt; google-java-format). All other filetypes: manual `==`.
 - **Plugin sync**: `nvim --headless "+Lazy! sync" +qa`
 - **Health check**: `:checkhealth` inside Neovim
 

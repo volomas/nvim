@@ -16,8 +16,9 @@ return {
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
-        -- Enable format-on-save for Go files only
-        if vim.bo[bufnr].filetype == 'go' then
+        -- Format on save for Go and Java only
+        local ft = vim.bo[bufnr].filetype
+        if ft == 'go' or ft == 'java' then
           return { timeout_ms = 500, lsp_format = 'fallback' }
         end
         return nil

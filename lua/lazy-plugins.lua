@@ -25,7 +25,6 @@ require('lazy').setup({
   'nelstrom/vim-visual-star-search',
   'nvim-tree/nvim-web-devicons',
   -- 'github/copilot.vim',
-  -- diffview removed: use built-in :DiffTool (Neovim 0.12)
 
   -- for markdown preview
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },

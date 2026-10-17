@@ -1,16 +1,18 @@
 return {
-  "nvim-tree/nvim-tree.lua",
-  version = "*",
+  'nvim-tree/nvim-tree.lua',
+  version = '*',
   lazy = false,
   dependencies = {
-    "nvim-tree/nvim-web-devicons",
+    'nvim-tree/nvim-web-devicons',
   },
   config = function()
-    require("nvim-tree").setup {
+    require('nvim-tree').setup {
+      disable_netrw = true,
+      hijack_netrw = false,
       filters = {
         dotfiles = false,
         git_ignored = false,
-        custom = {".git"}
+        custom = { '.git' },
       },
       git = {
         enable = true,
@@ -19,7 +21,7 @@ return {
         disable_for_dirs = {},
         timeout = 400,
         cygwin_support = false,
-      }
+      },
     }
   end,
 }
