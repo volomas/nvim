@@ -11,58 +11,18 @@ end
 -- ── Paths ───────────────────────────────────────────────────────────────────
 local mason_pkg = vim.fn.stdpath 'data' .. '/mason/packages'
 
+-- Detect Java major version from $JAVA_HOME so runtimes.name stays in sync
+-- with whatever sdkman has active. Output: e.g. "JavaSE-21"
+local java_home = vim.fn.expand '$JAVA_HOME'
+local java_runtime_name = 'JavaSE-21' -- fallback
+local version_output = vim.fn.system(java_home .. '/bin/java -version 2>&1')
+local major = version_output:match '"(%d+)%.'
+if major then
+  java_runtime_name = 'JavaSE-' .. major
+end
+
 local jdtls_path = mason_pkg .. '/jdtls'
 local lombok_jar = jdtls_path .. '/lombok.jar'
-
--- ── Java runtimes ─────────────────────────────────────────────────────────────
--- Register every installed JDK so a project targeting an older release still
--- resolves its execution environment. With only $JAVA_HOME registered, a Java
--- 17/11 project has no matching runtime and m2e silently falls back to
--- source/target 1.8.
-local java_home = vim.fn.expand '$JAVA_HOME'
-local default_home = (vim.uv.fs_realpath(java_home) or java_home):gsub('/$', '')
-
--- Read a JDK's `release` file for the true major version ("21.0.11",
--- "11.0.28", "1.8.0_392" -> 21, 11, 8). Cheaper and more reliable than
--- shelling out to `java -version` once per candidate.
-local function jdk_major(dir)
-  if vim.fn.filereadable(dir .. '/release') == 0 then
-    return nil
-  end
-  for _, line in ipairs(vim.fn.readfile(dir .. '/release')) do
-    local ver = line:match '^JAVA_VERSION="([^"]+)"'
-    if ver then
-      local m = ver:match '^1%.(%d+)' or ver:match '^(%d+)'
-      if m then
-        return tonumber(m)
-      end
-    end
-  end
-  return nil
-end
-
--- Collect candidates: every sdkman JDK, plus the active $JAVA_HOME (in case it
--- lives outside sdkman). Collapse to one runtime per major version, resolving
--- symlinks (sdkman's `current`) and preferring $JAVA_HOME for its own major.
-local candidates = vim.fn.glob(vim.fn.expand '~/.sdkman/candidates/java' .. '/*', true, true)
-table.insert(candidates, java_home)
-
-local by_major = {}
-for _, dir in ipairs(candidates) do
-  local real = (vim.uv.fs_realpath(dir) or dir):gsub('/$', '')
-  local major = jdk_major(real)
-  if major and (by_major[major] == nil or real == default_home) then
-    by_major[major] = real
-  end
-end
-
-local majors = vim.tbl_keys(by_major)
-table.sort(majors)
-local runtimes = {}
-for _, major in ipairs(majors) do
-  local home = by_major[major]
-  table.insert(runtimes, { name = 'JavaSE-' .. major, path = home, default = home == default_home })
-end
 
 -- The launcher jar drives the JVM startup
 local launcher_jar = vim.fn.glob(jdtls_path .. '/plugins/org.eclipse.equinox.launcher_*.jar')
@@ -82,24 +42,16 @@ if vim.fn.isdirectory(config_dir) == 0 then
   config_dir = jdtls_path .. '/' .. os_config:gsub('_arm$', '')
 end
 
--- Workspace: one directory per project (keyed by absolute root path)
--- Only repo-level markers. Build files (pom.xml/build.gradle) also appear in
--- every module of a multi-module project, which would start one jdtls per
--- module — wasteful, and it breaks neotest-java (tests in module B talk to
--- module A's server). Keeping repo-level markers means a single server per repo.
-local root_markers = { '.git', 'mvnw', 'gradlew', 'settings.gradle', 'settings.gradle.kts' }
+-- Workspace: one directory per project (keyed by project root name)
+local root_markers = { 'pom.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', 'settings.gradle.kts', '.git' }
 local root_dir = require('jdtls.setup').find_root(root_markers)
 if not root_dir then
   -- Fallback: current working directory
   root_dir = vim.fn.getcwd()
 end
--- Key on name + short hash of the absolute path so two repos with the same
--- directory name (e.g. two `backend` dirs, or a worktree next to its main
--- checkout) never share one index.
-local project_root = vim.fn.fnamemodify(root_dir, ':p')
-local project_name = vim.fn.fnamemodify(project_root:gsub('/$', ''), ':t')
-local project_hash = vim.fn.sha256(project_root):sub(1, 8)
-local workspace_dir = vim.fn.stdpath 'cache' .. '/jdtls-workspace/' .. project_name .. '-' .. project_hash
+local project_name = vim.fn.fnamemodify(root_dir, ':p:h:t')
+local jdtls_cache = vim.fn.stdpath 'cache' .. '/jdtls-workspace/' .. project_name
+local workspace_dir = jdtls_cache
 
 -- ── DAP bundles (java-debug-adapter + java-test) ───────────────────────────
 local bundles = {}
@@ -134,9 +86,8 @@ local jvm_args = {
   '-Declipse.application=org.eclipse.jdt.ls.core.id1',
   '-Dosgi.bundles.defaultStartLevel=4',
   '-Declipse.product=org.eclipse.jdt.ls.core.product',
-  -- ALL is useful when debugging jdtls itself; WARNING keeps .metadata/.log small
-  '-Dlog.level=WARNING',
-  '-Xmx2G',
+  '-Dlog.level=ALL',
+  '-Xmx1G',
   '--add-modules=ALL-SYSTEM',
   '--add-opens',
   'java.base/java.util=ALL-UNNAMED',
@@ -149,15 +100,22 @@ if vim.fn.filereadable(lombok_jar) == 1 then
   table.insert(jvm_args, '-javaagent:' .. lombok_jar)
 end
 
--- Build the launch command as a fresh list (never mutate jvm_args in place)
-local cmd = { vim.fn.expand '$JAVA_HOME/bin/java' }
-vim.list_extend(cmd, jvm_args)
-vim.list_extend(cmd, { '-jar', launcher_jar, '-configuration', config_dir, '-data', workspace_dir })
-
 -- ── JDTLS config ──────────────────────────────────────────────────────────────
 local config = {
   -- The command that starts the language server
-  cmd = cmd,
+  cmd = vim.list_extend(
+    {
+      vim.fn.expand '$JAVA_HOME/bin/java',
+    },
+    vim.list_extend(jvm_args, {
+      '-jar',
+      launcher_jar,
+      '-configuration',
+      config_dir,
+      '-data',
+      workspace_dir,
+    })
+  ),
 
   -- Project root detection
   root_dir = root_dir,
@@ -170,13 +128,21 @@ local config = {
         -- 'automatic' reimports on pom.xml changes without prompting;
         -- 'interactive' tries to show a UI prompt which doesn't work in nvim
         updateBuildConfiguration = 'automatic',
-        -- Every installed JDK, discovered above; the active $JAVA_HOME is the
-        -- default. This is what lets m2e resolve source/target levels for a
-        -- project pinned to 11/17/21 without falling back to 1.8.
-        runtimes = runtimes,
+        -- Map $JAVA_HOME to the correct JavaSE execution environment so m2e
+        -- can resolve compiler source/target levels instead of falling back to 1.8
+        runtimes = {
+          {
+            name = java_runtime_name,
+            path = java_home,
+            default = true,
+          },
+        },
       },
-      -- Organize imports when the buffer is saved
-      saveActions = { organizeImports = true },
+      -- Override Eclipse compiler settings globally — prevents m2e from
+      -- regenerating source=1.8 fallback when it can't resolve the pom property chain
+      settings = {
+        url = vim.fn.expand '~/.config/nvim/java-settings/org.eclipse.jdt.core.prefs',
+      },
       -- Keep Eclipse metadata (.classpath, .project, .factorypath) out of the project root
       import = {
         generatesMetadataFilesAtProjectRoot = false,
@@ -239,8 +205,8 @@ jdtls.setup_dap { hotcodereplace = 'auto' }
 
 -- Discover run configurations (main classes, test methods) only once the
 -- server has actually attached. Calling this inline right after
--- start_or_attach races the async initialization and silently yields no
--- configurations on a fresh project.
+-- start_or_attach throws "No LSP client found that supports
+-- vscode.java.resolveMainClass" and aborts the rest of this file (keymaps).
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('jdtls-dap-main-classes', { clear = true }),
   callback = function(args)
