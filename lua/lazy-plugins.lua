@@ -50,13 +50,13 @@ require('lazy').setup({
       terminal_colors = true, -- add neovim terminal colors
       undercurl = true,
       underline = true,
-      bold = true,
+      bold = false,
       italic = {
-        strings = true,
-        emphasis = true,
-        comments = true,
+        strings = false,
+        emphasis = false,
+        comments = false,
         operators = false,
-        folds = true,
+        folds = false,
       },
       strikethrough = true,
       invert_selection = false,
