@@ -118,11 +118,13 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
 local side = vim.api.nvim_create_augroup('transparentBg', { clear = true })
 vim.api.nvim_create_autocmd('ColorScheme', {
   callback = function()
-    vim.cmd [[highlight SignColumn guibg=NONE]]
-    vim.cmd [[highlight GitSignsAdd guibg=NONE]]
-    vim.cmd [[highlight GitSignsChange guibg=NONE]]
-    vim.cmd [[highlight GitSignsDelete guibg=NONE]]
-    vim.cmd [[highlight LineNr guibg=NONE]]
+    -- match Normal's bg instead of NONE so the terminal bg never bleeds through when switching themes
+    local bg = vim.api.nvim_get_hl(0, { name = 'Normal', link = false }).bg
+    for _, group in ipairs { 'SignColumn', 'LineNr', 'GitSignsAdd', 'GitSignsChange', 'GitSignsDelete' } do
+      local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+      hl.bg = bg
+      vim.api.nvim_set_hl(0, group, hl)
+    end
   end,
   group = side,
   pattern = '*',
@@ -143,12 +145,22 @@ require 'lazy-plugins'
 -- [[ Basic Keymaps ]]
 require 'keymaps'
 
+-- Setting 'background' while a colorscheme is active makes Neovim re-source that
+-- (old) scheme, which fires a stale ColorScheme event. Clear colors_name first,
+-- and reset highlights ourselves since some schemes only do that when colors_name is set.
+local function apply_theme(scheme, background)
+  vim.g.colors_name = nil
+  vim.cmd.highlight 'clear'
+  vim.o.background = background -- gruvbox picks its variant from 'background'
+  vim.cmd.colorscheme(scheme)
+end
+
 local lightFunc = function()
-  vim.cmd [[colorscheme github_light]]
+  apply_theme('github_light', 'light')
 end
 
 local darkFunc = function()
-  vim.cmd [[colorscheme kanagawa-wave]]
+  apply_theme('gruvbox', 'dark')
 end
 
 -- custom commands to switch between Light/Dark themes

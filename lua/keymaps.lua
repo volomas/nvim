@@ -1,5 +1,6 @@
 -- [[ Basic Keymaps ]]
 
+vim.keymap.set({'n'}, '<leader>q', '<cmd>qa<CR>', {desc = 'Quit all'});
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })

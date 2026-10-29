@@ -51,7 +51,8 @@ return {
 
           -- Custom keymaps (kept alongside 0.12 defaults grn/gra)
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-          vim.keymap.set({ 'v', 'n' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: Code Action' })
+          -- vim.keymap.set({ 'v', 'n' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: Code Action' })
+          vim.keymap.set({'n', 'v'}, '<M-CR>', vim.lsp.buf.code_action, { desc = "Code Action" })
 
           local util = require 'util'
           vim.keymap.set('n', '=o', util.organize_imports, { buffer = event.buf, desc = 'LSP: Organize Imports' })

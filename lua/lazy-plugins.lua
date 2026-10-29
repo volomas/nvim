@@ -34,6 +34,15 @@ require('lazy').setup({
     opts = {},
   },
   {
+    'blazkowolf/gruber-darker.nvim',
+    opts = {
+      bold = false,
+      italic = {
+        strings = false,
+      },
+    },
+  },
+  {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = true,
