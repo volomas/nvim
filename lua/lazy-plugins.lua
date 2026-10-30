@@ -73,6 +73,30 @@ require('lazy').setup({
 
   -- themes
   {
+    'xiantang/darcula-dark.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    lazy = false,
+    priority = 1000,
+  },
+
+  {
+    'pmouraguedes/neodarcula.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      -- stock neodarcula background is near-black (#000001); lift it to JetBrains'
+      -- New UI dark palette so it is easier on the eyes, and raise the tones that
+      -- are derived from it (cursor line, popups, inactive windows) to match.
+      local neodarcula = require 'neodarcula'
+      neodarcula.colors.bg = '#1E1F22'
+      neodarcula.colors.current_line = '#2B2D30'
+      neodarcula.colors.bg_inactive = '#2B2D30'
+    end,
+  },
+
+  {
     'rebelot/kanagawa.nvim',
     lazy = false,
     priority = 1003,

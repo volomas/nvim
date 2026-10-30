@@ -37,8 +37,31 @@ return {
     },
   },
   config = function(_, opts)
-    -- Diagonal fill for deleted lines (the IntelliJ diff look)
-    vim.opt.fillchars:append { diff = '╱' }
+    -- IntelliJ-style diff: blank fillers instead of the diagonal fill, and muted
+    -- inserted/deleted/changed tints (bg only, so syntax colours stay readable).
+    vim.opt.fillchars:append { diff = ' ' }
+
+    local function set_diff_hl()
+      if vim.o.background ~= 'dark' then
+        return
+      end
+      local groups = {
+        DiffAdd = { bg = '#2F4436' }, -- inserted lines (soft green)
+        DiffChange = { bg = '#283848' }, -- modified lines (blue-grey)
+        DiffDelete = { bg = '#412628' }, -- deleted lines (soft red)
+        DiffText = { bg = '#324F6C' }, -- modified characters (brighter blue)
+        DiffviewDiffAddAsDelete = { bg = '#412628' }, -- file panel: "added as deleted"
+      }
+      for group, attrs in pairs(groups) do
+        vim.api.nvim_set_hl(0, group, attrs)
+      end
+    end
+
+    vim.api.nvim_create_autocmd('ColorScheme', {
+      group = vim.api.nvim_create_augroup('diffviewDiffHl', { clear = true }),
+      callback = set_diff_hl,
+    })
+    set_diff_hl()
 
     local actions = require('diffview.actions')
 

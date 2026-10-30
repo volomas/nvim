@@ -24,7 +24,14 @@ return {
   },
   config = function()
     vim.o.foldcolumn = '0'
-    vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+    -- append instead of overwrite so other fillchars (e.g. `diff` from diffview) survive
+    vim.opt.fillchars:append {
+      eob = ' ',
+      fold = ' ',
+      foldopen = '',
+      foldsep = ' ',
+      foldclose = '',
+    }
     vim.o.foldlevel = 99
     vim.o.foldlevelstart = 99
     vim.o.foldenable = true

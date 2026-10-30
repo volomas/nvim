@@ -160,7 +160,7 @@ local lightFunc = function()
 end
 
 local darkFunc = function()
-  apply_theme('gruvbox', 'dark')
+  apply_theme('neodarcula', 'dark')
 end
 
 -- custom commands to switch between Light/Dark themes
