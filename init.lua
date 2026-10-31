@@ -125,6 +125,22 @@ vim.api.nvim_create_autocmd('ColorScheme', {
       hl.bg = bg
       vim.api.nvim_set_hl(0, group, hl)
     end
+
+    -- IntelliJ New UI gutter: dim numbers, softer highlight on the cursor line
+    local dark = vim.o.background == 'dark'
+    local function set_fg(group, fg)
+      local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+      hl.fg = fg
+      vim.api.nvim_set_hl(0, group, hl)
+    end
+    set_fg('LineNr', dark and '#4B5059' or '#AEB3C2')
+    set_fg('CursorLineNr', dark and '#A1A3AB' or '#767A8A')
+    -- muted git bar colours (IntelliJ-like) instead of the theme's bright pastels
+    set_fg('GitSignsAdd', '#5F9E6A')
+    set_fg('GitSignsChange', '#4A88C7')
+    set_fg('GitSignsDelete', '#C75450')
+    -- hairline right margin (virt-column.nvim)
+    vim.api.nvim_set_hl(0, 'VirtColumn', { fg = dark and '#393B40' or '#DFE1E5' })
   end,
   group = side,
   pattern = '*',

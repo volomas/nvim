@@ -19,7 +19,7 @@ vim.o.incsearch = true
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.scrolloff = 8
-vim.o.colorcolumn = '100'
+vim.o.colorcolumn = '120'
 
 vim.o.shiftwidth = 4
 vim.o.tabstop = 4
@@ -52,6 +52,10 @@ vim.o.smartcase = true
 
 -- Keep signcolumn on by default
 vim.o.signcolumn = 'yes'
+
+-- IntelliJ-style gutter: numbers first, signs (thin git bar) between numbers and text
+vim.o.numberwidth = 2
+vim.o.statuscolumn = '%=%l %s'
 
 -- Decrease update time
 vim.o.updatetime = 250
