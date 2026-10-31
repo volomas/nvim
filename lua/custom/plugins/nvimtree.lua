@@ -9,6 +9,9 @@ return {
     require('nvim-tree').setup {
       disable_netrw = true,
       hijack_netrw = false,
+      view = {
+        width = 60,
+      },
       filters = {
         dotfiles = false,
         git_ignored = false,
