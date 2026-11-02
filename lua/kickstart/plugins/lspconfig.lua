@@ -48,6 +48,15 @@ return {
 
           -- Custom keymaps (kept alongside 0.12 defaults grn/gra)
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+          -- Call hierarchy - who calls this / what does it call (gopls, jdtls)
+          if client and client:supports_method('textDocument/prepareCallHierarchy', event.buf) then
+            map('<leader>gc', vim.lsp.buf.incoming_calls, '[C]allers (incoming)')
+            map('<leader>gC', vim.lsp.buf.outgoing_calls, '[C]allees (outgoing)')
+          end
+
           -- vim.keymap.set({ 'v', 'n' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: Code Action' })
           vim.keymap.set({'n', 'v'}, '<M-CR>', vim.lsp.buf.code_action, { desc = "Code Action" })
 
@@ -66,7 +75,6 @@ return {
           -- are now built-in defaults in Neovim 0.12
 
           -- Highlight references of the word under cursor
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client:supports_method('textDocument/documentHighlight', event.buf) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
