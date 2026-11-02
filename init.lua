@@ -141,6 +141,21 @@ vim.api.nvim_create_autocmd('ColorScheme', {
     set_fg('GitSignsDelete', '#C75450')
     -- hairline right margin (virt-column.nvim)
     vim.api.nvim_set_hl(0, 'VirtColumn', { fg = dark and '#393B40' or '#DFE1E5' })
+
+    -- C/C++ fixes. neodarcula only defines the @lsp.type.* groups that Java's
+    -- jdtls emits, so in C two tokens land on colours the theme never meant for
+    -- them: @type.builtin -> nvim default link -> Special (olive) and
+    -- @lsp.type.macro -> nvim default link -> @constant (purple).
+    -- Follow IntelliJ instead: builtin types (int, char, ...) use the keyword
+    -- hue, function-like macros (assert, ...) the annotation yellow #B3AE60, and
+    -- numeric literals its teal tone.
+    vim.api.nvim_set_hl(0, '@type.builtin', { link = '@keyword' })
+    vim.api.nvim_set_hl(0, '@lsp.type.macro', { link = '@attribute' })
+    if dark then
+      for _, group in ipairs { '@number', '@lsp.type.number' } do
+        set_fg(group, '#2AACB8')
+      end
+    end
   end,
   group = side,
   pattern = '*',
@@ -161,24 +176,6 @@ require 'lazy-plugins'
 -- [[ Basic Keymaps ]]
 require 'keymaps'
 
--- Setting 'background' while a colorscheme is active makes Neovim re-source that
--- (old) scheme, which fires a stale ColorScheme event. Clear colors_name first,
--- and reset highlights ourselves since some schemes only do that when colors_name is set.
-local function apply_theme(scheme, background)
-  vim.g.colors_name = nil
-  vim.cmd.highlight 'clear'
-  vim.o.background = background -- gruvbox picks its variant from 'background'
-  vim.cmd.colorscheme(scheme)
-end
-
-local lightFunc = function()
-  apply_theme('github_light', 'light')
-end
-
-local darkFunc = function()
-  apply_theme('neodarcula', 'dark')
-end
-
 -- neodarcula draws window separators in gray (#808080), which is harsh on the
 -- dark bg; use JetBrains New UI's border tone instead. Re-applied on every :Dark.
 vim.api.nvim_create_autocmd('ColorScheme', {
@@ -191,9 +188,8 @@ vim.api.nvim_create_autocmd('ColorScheme', {
   end,
 })
 
--- custom commands to switch between Light/Dark themes
-vim.api.nvim_create_user_command('Light', lightFunc, {})
-vim.api.nvim_create_user_command('Dark', darkFunc, {})
+-- theme commands (:Dark, :Light, :LightNext, :LightTheme) live in lua/themes.lua
+require('themes').setup()
 
 -- dark theme by default
 vim.cmd [[Dark]]

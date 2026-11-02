@@ -104,6 +104,42 @@ require('lazy').setup({
     priority = 1003,
   },
 
+  -- Light themes, installed only to compare them (:LightNext / :LightTheme).
+  -- None of them is set as the default; nvim still starts on neodarcula.
+  {
+    'neanias/everforest-nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      -- "soft" = the darkest/least contrasty of the three background weights
+      require('everforest').setup { background = 'soft' }
+    end,
+  },
+
+  {
+    'zenbones-theme/zenbones.nvim',
+    dependencies = { 'rktjmp/lush.nvim' },
+    lazy = false,
+    priority = 1000,
+  },
+
+  {
+    'sainnhe/gruvbox-material',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.g.gruvbox_material_background = 'soft'
+      vim.g.gruvbox_material_palette = 'material'
+      vim.g.gruvbox_material_better_performance = 1
+    end,
+  },
+
+  {
+    'savq/melange-nvim',
+    lazy = false,
+    priority = 1000,
+  },
+
   {
     'projekt0n/github-nvim-theme',
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
