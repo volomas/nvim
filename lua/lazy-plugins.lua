@@ -147,6 +147,17 @@ require('lazy').setup({
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_x = {
+          -- One line, all in-flight LSP tasks joined (see lua/lsp-progress.lua)
+          function()
+            return require('lsp-progress').status()
+          end,
+          'encoding',
+          'fileformat',
+          'filetype',
+        },
+      },
     },
   },
 
