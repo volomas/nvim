@@ -93,6 +93,8 @@ require('lazy').setup({
       neodarcula.colors.bg = '#1E1F22'
       neodarcula.colors.current_line = '#2B2D30'
       neodarcula.colors.bg_inactive = '#2B2D30'
+      -- stock fg is near-white (#DDDDDD); use IntelliJ's New UI text colour instead
+      neodarcula.colors.fg = '#BCBEC4'
     end,
   },
 
