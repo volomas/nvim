@@ -21,6 +21,64 @@ if major then
   java_runtime_name = 'JavaSE-' .. major
 end
 
+-- ── Server JVM (the JVM jdtls itself runs on) ────────────────────────────────
+-- Since v1.63 the jdtls bundles declare Bundle-RequiredExecutionEnvironment:
+-- JavaSE-25. On an older JVM every org.eclipse.core.* bundle fails to resolve,
+-- the jdt.ls application never registers and the launcher dies with exit code 13
+-- ("Application org.eclipse.jdt.ls.core.id1 could not be found in the registry").
+-- The server therefore gets its own JDK while $JAVA_HOME (21) stays the project
+-- runtime for java.configuration.runtimes and m2e. JDTLS_JAVA_HOME wins if set.
+local MIN_JDTLS_JAVA = 25
+
+local function java_major(jdk_home)
+  if jdk_home == '' or vim.fn.executable(jdk_home .. '/bin/java') == 0 then
+    return nil
+  end
+  local out = vim.fn.system(jdk_home .. '/bin/java -version 2>&1')
+  return tonumber(out:match '"(%d+)%.')
+end
+
+local function find_server_jvm()
+  local candidates = {}
+  local override = vim.fn.expand '$JDTLS_JAVA_HOME'
+  if override ~= '' then
+    table.insert(candidates, override)
+  end
+  -- sdkman JDKs, newest name first (25.x sorts ahead of 21.x)
+  local sdkman_jdks = vim.fn.glob('~/.sdkman/candidates/java/*', false, true)
+  table.sort(sdkman_jdks, function(a, b)
+    return a > b
+  end)
+  vim.list_extend(candidates, sdkman_jdks)
+  -- Homebrew fallbacks (keg-only 25 first, then whatever `openjdk` points at)
+  vim.list_extend(candidates, { '/opt/homebrew/opt/openjdk@25', '/opt/homebrew/opt/openjdk' })
+
+  for _, home in ipairs(candidates) do
+    local name_major = tonumber(vim.fn.fnamemodify(home, ':t'):match '^(%d+)')
+    -- skip obvious mismatches without spawning a JVM per candidate
+    if name_major == nil or name_major >= MIN_JDTLS_JAVA then
+      local found = java_major(home)
+      if found and found >= MIN_JDTLS_JAVA then
+        return home
+      end
+    end
+  end
+  return nil
+end
+
+local jdtls_java_home = vim.g.jdtls_java_home or find_server_jvm()
+if not jdtls_java_home then
+  vim.notify(
+    ('jdtls needs a JDK %d+ runtime, none found (checked $JDTLS_JAVA_HOME, ~/.sdkman/candidates/java/*, /opt/homebrew/opt/openjdk@25). Install one or set JDTLS_JAVA_HOME.'):format(
+      MIN_JDTLS_JAVA
+    ),
+    vim.log.levels.ERROR
+  )
+  return
+end
+-- Cache the probe: this file runs per Java buffer and each probe spawns a JVM
+vim.g.jdtls_java_home = jdtls_java_home
+
 local jdtls_path = mason_pkg .. '/jdtls'
 local lombok_jar = jdtls_path .. '/lombok.jar'
 
@@ -105,7 +163,8 @@ local config = {
   -- The command that starts the language server
   cmd = vim.list_extend(
     {
-      vim.fn.expand '$JAVA_HOME/bin/java',
+      -- Server JVM, not the project JDK: jdtls bundles require JavaSE-25
+      jdtls_java_home .. '/bin/java',
     },
     vim.list_extend(jvm_args, {
       '-jar',

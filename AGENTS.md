@@ -28,6 +28,7 @@ Kickstart.nvim fork targeting Neovim 0.12+. Plugin manager: lazy.nvim (SSH git U
 ## LSP / Tooling (Mason-managed)
 - **LSP servers**: gopls, lua_ls, bashls (registered via `vim.lsp.config` / `vim.lsp.enable`)
 - **Java**: jdtls via nvim-jdtls, configured in `ftplugin/java.lua` (not in lspconfig)
+- **Java runtime split**: jdtls runs on a JDK ≥ 25 (auto-detected from `$JDTLS_JAVA_HOME`, `~/.sdkman/candidates/java/*`, `/opt/homebrew/opt/openjdk@25`), while the project runtime stays `$JAVA_HOME` (21) via `java.configuration.runtimes`. jdtls ≥ 1.63 requires `Bundle-RequiredExecutionEnvironment: JavaSE-25` and dies with LSP exit code 13 on JDK 21.
 - **Formatters**: stylua, goimports, gofumpt, google-java-format, jq, shfmt, prettierd/prettier
 - **Linters**: golangci-lint (Go), shellcheck (sh/bash)
 
