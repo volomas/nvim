@@ -55,7 +55,8 @@ vim.o.signcolumn = 'yes'
 
 -- IntelliJ-style gutter: numbers first, signs (thin git bar) between numbers and text
 vim.o.numberwidth = 2
-vim.o.statuscolumn = '%=%l %s'
+-- %l left-aligns the cursor line when number+relativenumber are both set; print the number ourselves so every row is right-aligned
+vim.o.statuscolumn = '%=%{v:relnum ? v:relnum : v:lnum} %s'
 
 -- Decrease update time
 vim.o.updatetime = 250

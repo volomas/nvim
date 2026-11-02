@@ -179,6 +179,18 @@ local darkFunc = function()
   apply_theme('neodarcula', 'dark')
 end
 
+-- neodarcula draws window separators in gray (#808080), which is harsh on the
+-- dark bg; use JetBrains New UI's border tone instead. Re-applied on every :Dark.
+vim.api.nvim_create_autocmd('ColorScheme', {
+  group = vim.api.nvim_create_augroup('custom-win-separator', { clear = true }),
+  pattern = 'neodarcula',
+  callback = function()
+    for _, group in ipairs { 'WinSeparator', 'VertSplit' } do
+      vim.api.nvim_set_hl(0, group, { fg = '#393B40', bg = 'NONE' })
+    end
+  end,
+})
+
 -- custom commands to switch between Light/Dark themes
 vim.api.nvim_create_user_command('Light', lightFunc, {})
 vim.api.nvim_create_user_command('Dark', darkFunc, {})
