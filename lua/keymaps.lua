@@ -63,6 +63,13 @@ vim.keymap.set('i', '<C-l>', 'copilot#Previous()', { expr = true, silent = true 
 -- Toggle file explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeFindFile<cr>', { silent = true, noremap = true })
 
+-- Rename the current file through LSP, so servers that support
+-- workspace/willRenameFiles (jdtls) can update classes/imports.
+-- rF, because <leader>rf is taken by the Java extract-constant refactor.
+vim.keymap.set('n', '<leader>rF', function()
+  require('snacks').rename.rename_file()
+end, { desc = '[R]ename [F]ile' })
+
 -- Comment toggle (using built-in gc/gcc from Neovim 0.10+)
 vim.keymap.set('n', '<C-_>', 'gcc', { remap = true, desc = 'Toggle comment' })
 vim.keymap.set('x', '<C-_>', 'gc', { remap = true, desc = 'Toggle comment' })

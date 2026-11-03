@@ -96,6 +96,8 @@ return {
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
+      vim.keymap.set('n', '<leader>:', builtin.command_history, { desc = 'Command [:] History' })
+      vim.keymap.set('n', '<leader>s?', builtin.search_history, { desc = '[S]earch [/] History' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>b', builtin.buffers, { desc = '[ ] Find existing buffers' })
@@ -123,6 +125,25 @@ return {
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- `actions.set_command_line` (the <CR> in `command_history` and `commands`)
+      -- runs the picked command with `vim.cmd()` synchronously inside the picker's
+      -- key handler. Commands that depend on the main loop - synchronous jobs such
+      -- as `:DiffviewOpen`, anything that prompts, or another picker - can block
+      -- there until <C-c>. Instead, replay the command on the command line, which
+      -- is exactly what pressing <C-e> followed by <CR> does.
+      -- Must be patched before any picker is created.
+      local actions = require 'telescope.actions'
+      local action_state = require 'telescope.actions.state'
+      local set_command_line = actions.set_command_line
+      actions.set_command_line = function(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        if selection == nil then
+          return set_command_line(prompt_bufnr)
+        end
+        actions.close(prompt_bufnr)
+        vim.api.nvim_feedkeys(':' .. selection.value .. '\r', 'nt', false)
+      end
     end,
   },
 }
