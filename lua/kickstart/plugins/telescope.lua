@@ -56,6 +56,18 @@ return {
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          -- IntelliJ-style: prompt on top, best match directly below it,
+          -- worse matches further down (default is prompt at the bottom
+          -- with the best match at the bottom of the list).
+          sorting_strategy = 'ascending',
+          -- Start without the preview pane so the results list gets the full
+          -- width. The previewer is still constructed, so
+          -- `telescope.actions.layout.toggle_preview` can bring it back.
+          preview = { hide_on_startup = true },
+          layout_config = {
+            horizontal = { prompt_position = 'top' },
+            vertical = { prompt_position = 'top' },
+          },
           vimgrep_arguments = {
             'rg',
             '--color=never',
