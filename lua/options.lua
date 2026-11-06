@@ -94,4 +94,8 @@ vim.o.confirm = true
 -- Global floating window border (new in 0.12, replaces per-plugin border config)
 vim.o.winborder = 'rounded'
 
+-- .http is detected natively in 0.12; map .rest to the same ft so kulala and
+-- tree-sitter queries apply to both.
+vim.filetype.add { extension = { rest = 'http' } }
+
 -- vim: ts=2 sts=2 sw=2 et
