@@ -23,6 +23,8 @@ return {
         return nil
       end,
       formatters_by_ft = {
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
         go = { 'goimports', 'gofumpt' },
         java = { 'google-java-format' },
         json = { 'jq' },
