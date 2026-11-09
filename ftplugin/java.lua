@@ -182,6 +182,16 @@ local config = {
   -- See: https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   settings = {
     java = {
+      -- Maven owns compilation. The JDT compiler bundled with this jdtls throws
+      -- `ClassCastException: BlockScope cannot be cast to MethodScope` on any
+      -- Lombok `@SneakyThrows` constructor; the Java Builder then retries in a
+      -- loop, deleting target/classes and rewriting
+      -- target/generated-sources/annotations while Maven is reading them, so
+      -- nothing compiles or runs. Tests are compiled by Maven through
+      -- neotest-java (lua/custom/plugins/neotest.lua). Diagnostics that need a
+      -- build are lost until jdtls ships a fixed ECJ / the file drops
+      -- @SneakyThrows.
+      autobuild = { enabled = false },
       eclipse = { downloadSources = true },
       configuration = {
         -- 'automatic' reimports on pom.xml changes without prompting;
@@ -329,25 +339,113 @@ map('n', '<leader>gt', function()
   require('jdtls.tests').goto_subjects()
 end, 'Goto: Test / Subject')
 
--- Run / Debug: \r, \d (mirrors ideavimrc RunClass / DebugClass)
-map('n', '\\r', function()
-  jdtls.test_nearest_method { config_overrides = { noDebug = true } }
-end, 'Run: Nearest Test Method')
-map('n', '\\d', function()
-  jdtls.test_nearest_method()
-end, 'Debug: Nearest Test Method')
+-- ── Run / Debug tests (neotest + neotest-java) ───────────────────────────────
+-- Not jdtls.test_*: vscode-java-test 0.47 (mason) emits JSON results
+-- (@@<TestRunner-...-TestRunner>) which nvim-jdtls' junit.lua cannot parse, so
+-- the built-in runner reports "0 succeeded" and only writes to dap-repl.
+-- neotest-java runs the JUnit console standalone jar and reports real results.
+--
+-- Results go to a run-scoped window (lua/custom/java_test_results.lua): only
+-- the tests of this run, live status, failures with their message. <CR> on a
+-- row opens its output/stack trace, i = jump to source, r = rerun.
+local java_tests = function()
+  return require 'custom.java_test_results'
+end
 
--- Run / Debug entire test class: \R, \D (bonus: run/debug whole class like IntelliJ's "Run class")
+-- \r = run nearest test (method under cursor, or enclosing class), \R = whole class.
+map('n', '\\r', function()
+  java_tests().run()
+end, 'Run: Nearest Test')
 map('n', '\\R', function()
-  jdtls.test_class { config_overrides = { noDebug = true } }
+  java_tests().run(vim.fn.expand '%')
 end, 'Run: Test Class')
+
+-- \d / \D = same targets through nvim-dap (neotest-java DAP strategy).
+map('n', '\\d', function()
+  java_tests().run { strategy = 'dap' }
+end, 'Debug: Nearest Test')
 map('n', '\\D', function()
-  jdtls.test_class()
+  java_tests().run { vim.fn.expand '%', strategy = 'dap' }
 end, 'Debug: Test Class')
+
+-- \u = rerun the last test (same as the Go ftplugin)
+map('n', '\\u', function()
+  java_tests().run_last()
+end, 'Run: Last Test')
 
 -- Organize imports: =o (already mapped globally via util.organize_imports; override with jdtls version)
 map('n', '=o', function()
   jdtls.organize_imports()
 end, 'Organize Imports')
+
+-- ── IntelliJ-style parameter colour ──────────────────────────────────────────
+-- IntelliJ draws method parameters in purple but leaves lambda parameters as
+-- plain text. jdtls types both as `parameter` and gives us no modifier to tell
+-- them apart, so mark the tokens ourselves (priority above the engine's own
+-- marks, cleaned up by it on updates) and skip a token whose name appears in
+-- the parameter list of the lambda that encloses it.
+local param_augroup = vim.api.nvim_create_augroup('jdtls-intellij-params', { clear = false })
+
+local function node_text(bufnr, node)
+  return vim.treesitter.get_node_text(node, bufnr)
+end
+
+--- Parameter names declared by a lambda expression.
+--- @param bufnr integer
+--- @param lambda TSNode
+--- @return table<string, boolean>
+local function lambda_param_names(bufnr, lambda)
+  local names = {}
+  local fields = lambda:field 'parameters'
+  local params = fields and fields[1]
+  if not params then
+    return names
+  end
+  local function walk(node)
+    if node:type() == 'identifier' then
+      names[node_text(bufnr, node)] = true
+      return
+    end
+    for child in node:iter_children() do
+      walk(child)
+    end
+  end
+  walk(params)
+  return names
+end
+
+--- True when the treesitter node is a lambda parameter (declaration or use).
+--- @param bufnr integer
+--- @param node TSNode
+--- @param name string
+--- @return boolean
+local function is_lambda_parameter(bufnr, node, name)
+  local parent = node:parent()
+  while parent do
+    if parent:type() == 'lambda_expression' then
+      return lambda_param_names(bufnr, parent)[name] == true
+    end
+    parent = parent:parent()
+  end
+  return false
+end
+
+vim.api.nvim_create_autocmd('LspTokenUpdate', {
+  group = param_augroup,
+  buffer = vim.api.nvim_get_current_buf(),
+  callback = function(args)
+    local token = args.data.token
+    if token.type ~= 'parameter' then
+      return
+    end
+    local line = vim.api.nvim_buf_get_lines(args.buf, token.line, token.line + 1, false)[1] or ''
+    local name = line:sub(token.start_col + 1, token.end_col)
+    local ok, node = pcall(vim.treesitter.get_node, { bufnr = args.buf, pos = { token.line, token.start_col } })
+    if ok and node and is_lambda_parameter(args.buf, node, name) then
+      return
+    end
+    vim.lsp.semantic_tokens.highlight_token(token, args.buf, args.data.client_id, 'IntelliJJavaParameter')
+  end,
+})
 
 -- vim: ts=2 sts=2 sw=2 et

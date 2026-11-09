@@ -156,6 +156,29 @@ vim.api.nvim_create_autocmd('ColorScheme', {
         set_fg(group, '#2AACB8')
       end
     end
+
+    -- Java (jdtls). IntelliJ Darcula draws static final fields in purple italic
+    -- and method parameters in purple. jdtls emits language-scoped semantic
+    -- token groups (`@lsp.typemod.property.<mod>.java` at priority 127), so
+    -- defining the fully-qualified name wins for Java only: locals, instance
+    -- fields and other languages stay as they are. Re-applied on every
+    -- ColorScheme because plugins reset groups.
+    if dark then
+      local java_purple = '#D7A1F0'
+      -- static final field: the token carries both static and readonly modifiers
+      local constants = {
+        '@lsp.typemod.property.static.java',
+        '@lsp.typemod.property.readonly.java',
+        '@constant.java', -- treesitter fallback for SCREAMING_SNAKE constants
+      }
+      for _, group in ipairs(constants) do
+        vim.api.nvim_set_hl(0, group, { fg = java_purple, italic = true })
+      end
+      -- Method parameters cannot be a plain semantic-token group: jdtls types
+      -- them exactly like lambda parameters, and IntelliJ colours only the
+      -- former. ftplugin/java.lua marks the tokens itself with this group.
+      vim.api.nvim_set_hl(0, 'IntelliJJavaParameter', { fg = java_purple })
+    end
   end,
   group = side,
   pattern = '*',
