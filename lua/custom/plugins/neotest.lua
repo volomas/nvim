@@ -42,6 +42,51 @@ local function maven_compiler()
   }
 end
 
+--- The Java adapter, with two small patches:
+---
+--- 1. `results`: neotest's result objects carry no timing information and
+---    neotest-java deletes the JUnit XML reports right after parsing them, so
+---    read the report files first and hand the durations to the results window
+---    (lua/custom/java_test_results.lua).
+--- 2. `build_spec`: the adapter hardcodes `--details=testfeed`, which prints a
+---    progress feed to the launcher's stdout during the run. `--details=none`
+---    keeps that noise out of the output panel. (JUnit's XML report still
+---    writes a small `unique-id:` block per test; the results window strips it.)
+local function java_adapter()
+  local adapter = require 'neotest-java'({
+    incremental_build = true,
+  }, {
+    lsp_compiler = maven_compiler(),
+  })
+
+  local results = adapter.results
+  adapter.results = function(spec, result, tree)
+    pcall(function()
+      require('custom.java_test_results').record_reports(spec.context and spec.context.reports_dir)
+    end)
+    return results(spec, result, tree)
+  end
+
+  local build_spec = adapter.build_spec
+  adapter.build_spec = function(args)
+    local spec = build_spec(args)
+    local specs = type(spec) == 'table' and (spec[1] and spec or { spec }) or {}
+    for _, one in ipairs(specs) do
+      local command = one.command
+      if type(command) == 'table' then
+        for i, arg in ipairs(command) do
+          if arg == '--details=testfeed' then
+            command[i] = '--details=none'
+          end
+        end
+      end
+    end
+    return spec
+  end
+
+  return adapter
+end
+
 return {
   {
     'nvim-neotest/neotest',
@@ -76,11 +121,7 @@ return {
             go_test_args = { '-v', '-race', '-count=1' },
             dap_go_enabled = true, -- Enable DAP integration for debugging tests
           },
-          require 'neotest-java'({
-            incremental_build = true,
-          }, {
-            lsp_compiler = maven_compiler(),
-          }),
+          java_adapter(),
         },
       }
     end,
