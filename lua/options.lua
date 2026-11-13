@@ -83,6 +83,12 @@ vim.o.cursorline = true
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
+-- Command-line completion: popup menu with fuzzy matching, ranked by best match
+-- instead of alphabetically. Fuzzy does not apply to file/dir names or history.
+-- See `:help 'wildoptions'` and `:help 'wildmode'`
+vim.o.wildoptions = 'pum,fuzzy'
+vim.o.wildmode = 'longest:full,full'
+
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
