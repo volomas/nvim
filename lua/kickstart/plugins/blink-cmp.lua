@@ -77,8 +77,14 @@ return {
 
       sources = {
         default = { 'lsp', 'buffer', 'path', 'snippets', 'lazydev' },
+        -- Table/column names from the connection of the current SQL buffer
+        -- (vim-dadbod-completion, loaded via `ft = 'sql'` in custom/plugins/dadbod.lua)
+        per_filetype = {
+          sql = { 'dadbod', 'snippets', 'buffer' },
+        },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
         },
       },
 

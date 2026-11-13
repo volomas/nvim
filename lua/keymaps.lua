@@ -74,6 +74,9 @@ end, { desc = '[R]ename [F]ile' })
 vim.keymap.set('n', '<C-_>', 'gcc', { remap = true, desc = 'Toggle comment' })
 vim.keymap.set('x', '<C-_>', 'gc', { remap = true, desc = 'Toggle comment' })
 
+-- esc in terminal mode
+vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]], { noremap = true })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
