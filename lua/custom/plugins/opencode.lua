@@ -5,14 +5,8 @@ return {
   end,
   dependencies = {
     'nvim-lua/plenary.nvim',
-    {
-      'MeanderingProgrammer/render-markdown.nvim',
-      opts = {
-        anti_conceal = { enabled = false },
-        file_types = { 'markdown', 'opencode_output' },
-      },
-      ft = { 'markdown', 'opencode_output' },
-    },
+    -- markdown rendering for opencode output, configured in custom/plugins/render-markdown.lua
+    'MeanderingProgrammer/render-markdown.nvim',
     'saghen/blink.cmp',
     'folke/snacks.nvim',
   },

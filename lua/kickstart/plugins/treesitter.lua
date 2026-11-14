@@ -11,7 +11,7 @@ return {
       local parsers = {
         'bash', 'c', 'cpp', 'diff', 'go', 'html', 'java', 'javascript',
         'lua', 'luadoc', 'markdown', 'markdown_inline', 'python',
-        'query', 'rust', 'tsx', 'typescript', 'vim', 'vimdoc',
+        'query', 'rust', 'tsx', 'typescript', 'vim', 'vimdoc', 'yaml',
       }
       require('nvim-treesitter').install(parsers)
 
