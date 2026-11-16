@@ -192,6 +192,7 @@ return {
         'shfmt',
         'prettierd', -- JS/TS formatter (conform.lua)
         'clang-format', -- C/C++ formatter (conform.lua)
+        'tree-sitter-cli', -- Required by nvim-treesitter (main branch) to build parsers
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
       require('mason-lspconfig').setup {}

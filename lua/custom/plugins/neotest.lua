@@ -1,30 +1,58 @@
--- Compile Java tests with Maven instead of jdtls' `java/buildWorkspace`.
+-- Build tooling for neotest-java.
 --
--- jdtls (ECJ 1.63, the version bundled with mason's jdtls >= 1.63) crashes on a
--- Lombok `@SneakyThrows` constructor with
---   ClassCastException: BlockScope cannot be cast to MethodScope
--- (see redhat-developer/vscode-java#4558 / eclipse.jdt.ls#3199). The Java
--- Builder then retries forever, wipes target/classes and rewrites
--- target/generated-sources/annotations while Maven compiles them, so nothing
--- can be compiled or run. `java.autobuild.enabled` is therefore disabled in
--- ftplugin/java.lua and Maven owns the build output.
-local function maven_compiler()
+-- jdtls autobuild is disabled in ftplugin/java.lua, so the build tool owns the
+-- compiled output:
+--
+-- * Maven: jdtls (ECJ 1.63, bundled with mason's jdtls >= 1.63) crashes on a
+--   Lombok `@SneakyThrows` constructor with
+--     ClassCastException: BlockScope cannot be cast to MethodScope
+--   (see redhat-developer/vscode-java#4558 / eclipse.jdt.ls#3199). The Java
+--   Builder then retries forever, wipes target/classes and rewrites
+--   target/generated-sources/annotations while Maven compiles them. Maven
+--   output (target/classes) is what jdtls already reports, so nothing to remap.
+-- * Gradle: jdtls (Buildship) reports Eclipse output dirs `bin/<sourceSet>`,
+--   which stay empty without autobuild. Gradle writes to
+--   `build/classes/java/<sourceSet>` and `build/resources/<sourceSet>`, so the
+--   classpath is remapped to those.
+local GRADLE_MARKERS = { 'build.gradle', 'build.gradle.kts', 'settings.gradle', 'settings.gradle.kts' }
+
+local function is_gradle(dir)
+  for _, name in ipairs(GRADLE_MARKERS) do
+    if vim.uv.fs_stat(dir .. '/' .. name) then
+      return true
+    end
+  end
+  return false
+end
+
+local function build_command(cwd)
+  if is_gradle(cwd) then
+    local wrapper = cwd .. '/gradlew'
+    local cmd = { vim.fn.executable(wrapper) == 1 and wrapper or 'gradle', '--offline', '-q', 'testClasses' }
+    if vim.uv.fs_stat(cwd .. '/src/integrationTest') then
+      table.insert(cmd, 'integrationTestClasses')
+    end
+    return cmd
+  end
+
+  local wrapper = cwd .. '/mvnw'
+  return {
+    vim.fn.executable(wrapper) == 1 and wrapper or 'mvn',
+    '-o', -- dependencies are already in the local repo; fail fast otherwise
+    '-q',
+    '-DskipTests',
+    '-Dspotless.check.skip=true',
+    '-Dcheckstyle.skip=true',
+    'test-compile',
+  }
+end
+
+local function java_compiler()
   return {
     -- opts = { base_dir = neotest-java.Path, compile_mode = 'incremental'|'full' }
     compile = function(opts)
       local cwd = opts.base_dir:to_string()
-      local wrapper = cwd .. '/mvnw'
-      local mvn = vim.fn.executable(wrapper) == 1 and wrapper or 'mvn'
-
-      local cmd = {
-        mvn,
-        '-o', -- dependencies are already in the local repo; fail fast otherwise
-        '-q',
-        '-DskipTests',
-        '-Dspotless.check.skip=true',
-        '-Dcheckstyle.skip=true',
-        'test-compile',
-      }
+      local cmd = build_command(cwd)
 
       local nio = require 'nio'
       local future = nio.control.future()
@@ -35,9 +63,44 @@ local function maven_compiler()
       local result = future.wait()
       if result.code ~= 0 then
         local output = table.concat({ result.stdout or '', result.stderr or '' }, '\n')
-        vim.notify('Maven test-compile failed:\n' .. output:sub(-3000), vim.log.levels.ERROR)
-        error 'mvn test-compile failed'
+        vim.notify(cmd[1] .. ' compile failed:\n' .. output:sub(-3000), vim.log.levels.ERROR)
+        error('java compile failed: ' .. cmd[1])
       end
+    end,
+  }
+end
+
+--- neotest-java's default classpath provider; for Gradle modules, `bin/<sourceSet>`
+--- entries are replaced by Gradle's real class and resource output dirs. The same
+--- provider feeds the JUnit launcher and the javap method-id resolver.
+local function java_classpath_provider()
+  local compilers = require 'neotest-java.core.spec_builder.compiler'
+  local ClasspathProvider = require 'neotest-java.core.spec_builder.compiler.classpath_provider'
+  local default = ClasspathProvider { client_provider = compilers.client_provider }
+
+  return {
+    get_classpath = function(base_dir, additional_entries)
+      local classpath = default.get_classpath(base_dir, additional_entries)
+      -- Method-id resolution passes the test file's directory, not the module root.
+      local dir = vim.fs.root(base_dir:to_string(), GRADLE_MARKERS)
+      if not dir then
+        return classpath
+      end
+      local name = vim.fs.basename(dir)
+
+      local entries = {}
+      for _, entry in ipairs(vim.split(classpath, ':', { plain = true })) do
+        -- jdtls reports either `<dir>/bin/<sourceSet>` or the workspace-relative `/<project>/bin/<sourceSet>`
+        local source_set = entry:match('^' .. vim.pesc(dir) .. '/bin/([%w_]+)$') or entry:match('^/' .. vim.pesc(name) .. '/bin/([%w_]+)$')
+        local classes = source_set and dir .. '/build/classes/java/' .. source_set
+        if classes and vim.uv.fs_stat(classes) then
+          table.insert(entries, classes)
+          table.insert(entries, dir .. '/build/resources/' .. source_set)
+        else
+          table.insert(entries, entry)
+        end
+      end
+      return table.concat(entries, ':')
     end,
   }
 end
@@ -56,7 +119,8 @@ local function java_adapter()
   local adapter = require 'neotest-java'({
     incremental_build = true,
   }, {
-    lsp_compiler = maven_compiler(),
+    lsp_compiler = java_compiler(),
+    classpath_provider = java_classpath_provider(),
   })
 
   local results = adapter.results

@@ -216,7 +216,9 @@ local config = {
       import = {
         generatesMetadataFilesAtProjectRoot = false,
         gradle = {
-          -- Init script redirects Eclipse output dirs (bin/) into build/eclipse-output
+          -- Init script redirects the Eclipse default output dir into build/eclipse-bin.
+          -- Per-source-set outputs (bin/main, bin/test) are not affected; neotest remaps
+          -- those to build/classes (lua/custom/plugins/neotest.lua).
           arguments = { '--init-script', vim.fn.expand '~/.config/nvim/java-settings/jdtls-init.gradle' },
         },
       },
