@@ -37,6 +37,7 @@ vim.keymap.set('n', '<leader>c', function()
 end, { desc = '[C]lass / Go to Class' })
 
 vim.keymap.set('n', '\\\\', ':noh<CR>', { noremap = true })
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
@@ -48,17 +49,13 @@ vim.keymap.set('n', '<leader>2', '2gt')
 vim.keymap.set('n', '<leader>3', '3gt')
 vim.keymap.set('n', '<leader>4', '4gt')
 vim.keymap.set('n', '<leader>5', '5gt')
-vim.keymap.set('n', '<C-q>', ':qall<CR>')
+vim.keymap.set('n', '<C-q>', '<cmd>qa<CR>', { desc = 'Quit all' })
 -- alternate file mapping on backspace
 vim.keymap.set('n', '<BS>', '<C-^>')
 
 -- repeatble indent in visual mode
 vim.keymap.set('x', '>', [[>gv]])
 vim.keymap.set('x', '<', [[<gv]])
-
--- copilot
-vim.keymap.set('i', '<C-j>', 'copilot#Next()', { expr = true, silent = true })
-vim.keymap.set('i', '<C-l>', 'copilot#Previous()', { expr = true, silent = true })
 
 -- Toggle file explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeFindFile<cr>', { silent = true, noremap = true })
@@ -91,5 +88,30 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Restore the last cursor position when reopening a file
+vim.api.nvim_create_autocmd('BufReadPost', {
+  desc = 'Restore last cursor position',
+  group = vim.api.nvim_create_augroup('restore-cursor', { clear = true }),
+  callback = function(event)
+    if vim.bo[event.buf].filetype:match 'commit' then
+      return
+    end
+    local mark = vim.api.nvim_buf_get_mark(event.buf, '"')
+    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(event.buf) then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
+  end,
+})
+
+-- Reload files changed outside Neovim (git checkout, formatters, other tools)
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'TermLeave' }, {
+  desc = 'Check for external file changes',
+  group = vim.api.nvim_create_augroup('auto-checktime', { clear = true }),
+  callback = function()
+    if vim.fn.getcmdwintype() == '' then
+      vim.cmd.checktime()
+    end
+  end,
+})
 
 -- vim: ts=2 sts=2 sw=2 et

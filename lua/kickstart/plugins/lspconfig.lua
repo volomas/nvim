@@ -57,8 +57,7 @@ return {
             map('<leader>gC', vim.lsp.buf.outgoing_calls, '[C]allees (outgoing)')
           end
 
-          -- vim.keymap.set({ 'v', 'n' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: Code Action' })
-          vim.keymap.set({'n', 'v'}, '<M-CR>', vim.lsp.buf.code_action, { desc = "Code Action" })
+          map('<M-CR>', vim.lsp.buf.code_action, 'Code Action', { 'n', 'v' })
 
           local util = require 'util'
           vim.keymap.set('n', '=o', util.organize_imports, { buffer = event.buf, desc = 'LSP: Organize Imports' })
@@ -122,9 +121,11 @@ return {
             [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
+        -- current line is covered by virtual_lines below; avoid showing it twice
         virtual_text = {
           source = 'if_many',
           spacing = 2,
+          current_line = false,
         },
         -- Show diagnostics as virtual lines for the current line (new in 0.12)
         virtual_lines = { current_line = true },
@@ -189,6 +190,8 @@ return {
         'bash-language-server',
         'shellcheck',
         'shfmt',
+        'prettierd', -- JS/TS formatter (conform.lua)
+        'clang-format', -- C/C++ formatter (conform.lua)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
       require('mason-lspconfig').setup {}

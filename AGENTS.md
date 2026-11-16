@@ -35,9 +35,9 @@ Kickstart.nvim fork targeting Neovim 0.12+. Plugin manager: lazy.nvim (SSH git U
 ## Conventions
 - Plugin specs return a table (or list of tables) from each file
 - Adding a new plugin: create `lua/custom/plugins/<name>.lua` returning a lazy.nvim spec
-- `lazy-lock.json` is gitignored — not committed
+- `lazy-lock.json` is tracked (reproducible plugin versions); commit it after `:Lazy update`
 - Nerd Font assumed (`vim.g.have_nerd_font = true`)
-- Two theme commands: `:Dark` (darcula_dark, default) and `:Light` (github_light)
+- Theme commands (`lua/themes.lua`): `:Dark` (neodarcula, default), `:Light` (gruvbox light), `:LightNext` / `:LightTheme <name>` to compare other light themes. Non-default themes are `lazy = true` and load on `:colorscheme`
 
 ## Testing
 - No test suite. Validate by loading Neovim and checking `:checkhealth`.

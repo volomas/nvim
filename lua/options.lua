@@ -1,14 +1,6 @@
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
--- netrw settings
-vim.g.netrw_banner = 0
-vim.g.netrw_winsize = 30
-vim.g.netrw_browse_split = 0
-vim.g.netrw_preview = 1
-vim.g.netrw_altv = 1
-vim.g.netrw_liststyle = 3
-
 vim.g.editorconfig = true
 
 -- Set highlight on search
@@ -67,6 +59,8 @@ vim.o.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
+-- Keep the text in place when splits open/close instead of scrolling it
+vim.o.splitkeep = 'screen'
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`

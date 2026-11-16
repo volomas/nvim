@@ -22,7 +22,6 @@ require('lazy').setup({
   -- vim-unimpaired removed: [d/]d, [q/]q, [b/]b etc. are now Neovim 0.12 defaults
   'tpope/vim-obsession',
   'unblevable/quick-scope',
-  'nelstrom/vim-visual-star-search',
   'nvim-tree/nvim-web-devicons',
   -- 'github/copilot.vim',
 
@@ -44,7 +43,7 @@ require('lazy').setup({
   },
   {
     'ellisonleao/gruvbox.nvim',
-    priority = 1000,
+    lazy = true, -- loaded on :colorscheme
     config = true,
     opts = {
       terminal_colors = true, -- add neovim terminal colors
@@ -73,15 +72,6 @@ require('lazy').setup({
 
   -- themes
   {
-    'xiantang/darcula-dark.nvim',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
-    lazy = false,
-    priority = 1000,
-  },
-
-  {
     'pmouraguedes/neodarcula.nvim',
     lazy = false,
     priority = 1000,
@@ -100,16 +90,14 @@ require('lazy').setup({
 
   {
     'rebelot/kanagawa.nvim',
-    lazy = false,
-    priority = 1003,
+    lazy = true, -- loaded on :colorscheme
   },
 
   -- Light themes, installed only to compare them (:LightNext / :LightTheme).
   -- None of them is set as the default; nvim still starts on neodarcula.
   {
     'neanias/everforest-nvim',
-    lazy = false,
-    priority = 1000,
+    lazy = true, -- loaded on :colorscheme
     config = function()
       -- "soft" = the darkest/least contrasty of the three background weights
       require('everforest').setup { background = 'soft' }
@@ -118,15 +106,13 @@ require('lazy').setup({
 
   {
     'zenbones-theme/zenbones.nvim',
+    lazy = true, -- loaded on :colorscheme
     dependencies = { 'rktjmp/lush.nvim' },
-    lazy = false,
-    priority = 1000,
   },
 
   {
     'sainnhe/gruvbox-material',
-    lazy = false,
-    priority = 1000,
+    lazy = true, -- loaded on :colorscheme
     config = function()
       vim.g.gruvbox_material_background = 'soft'
       vim.g.gruvbox_material_palette = 'material'
@@ -136,41 +122,19 @@ require('lazy').setup({
 
   {
     'savq/melange-nvim',
-    lazy = false,
-    priority = 1000,
+    lazy = true, -- loaded on :colorscheme
   },
 
   {
     'projekt0n/github-nvim-theme',
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
+    lazy = true, -- loaded on :colorscheme
     config = function()
       require('github-theme').setup {
         -- ...
       }
     end,
   },
-  { 'rose-pine/neovim', name = 'rose-pine' },
-
-  {
-    'vermdeep/darcula_dark.nvim',
-    lazy = false,
-    priority = 1002,
-    config = function(_, opts)
-      -- enable colorscheme
-      -- vim.cmd 'set termguicolors'
-      -- vim.cmd [[colorscheme darcula_dark]]
-    end,
-  },
-
-  {
-    'rktjmp/lush.nvim',
-    lazy = false,
-    priority = 1000,
-    dependencies = {
-      'vermdeep/darcula_dark.nvim',
-    },
-  },
+  { 'rose-pine/neovim', name = 'rose-pine', lazy = true },
 
   {
     -- Set lualine as statusline
@@ -226,22 +190,7 @@ require('lazy').setup({
 
   require 'kickstart.plugins.autopairs',
 
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
-  --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
+  -- user plugins: lua/custom/plugins/*.lua
   { import = 'custom.plugins' },
 }, {
   git = {
